@@ -8,6 +8,35 @@
 
 const logout = async (e) => {
 //Include the code for logout here.
+let logout_url = window.location.origin + "/djangoapp/logout/";
+console.log("Logout URL: ", logout_url);  // Check if the logout URL is correct
+
+alert("Logging out "+username+"...");  // This will show a test alert to ensure alerts are working
+
+try {
+  const res = await fetch(logout_url, {
+    method: "GET",
+  });
+  
+  console.log("Response received: ", res);  // Log the response to check if the fetch is successful
+  
+  // Log the current session storage value to check if the username is stored
+  console.log("Session username before logout: ", sessionStorage.getItem('username'));
+
+  if (res.ok) {  // If the response is successful
+    let username = sessionStorage.getItem('username');
+    sessionStorage.removeItem('username');  // Remove the username from sessionStorage
+    console.log("Username after removal: ", sessionStorage.getItem('username'));  // Check if the username is removed
+
+    alert("Logging out " + username + "...");  // This is the message you expect to see when logging out
+    window.location.href = window.location.origin;  // Redirect to home page
+  } else {
+    alert("The user could not be logged out.");
+  }
+} catch (err) {
+  console.log("Error during logout:", err);  // Log any errors
+  alert("An error occurred during logout.");
+}
 };
 
 let checkSession = ()=>{
