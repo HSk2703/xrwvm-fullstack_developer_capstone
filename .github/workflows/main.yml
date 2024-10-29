@@ -1,0 +1,45 @@
+name: Lint Codebase
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  lint_python_and_js:
+    name: Lint Python and JavaScript Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      
+      # Python Linting
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+      - name: Run Python Linter
+        run: |
+          # This command finds all Python files recursively and runs flake8 on them
+          find . -name "*.py" -exec flake8 {} +
+      
+      # JavaScript Linting
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Install JSHint
+        run: npm install jshint --global
+      - name: Run JavaScript Linter
+        run: |
+          # This command finds all JavaScript files recursively and runs JSHint on them
+          find . -name "*.js" -exec jshint {} +
