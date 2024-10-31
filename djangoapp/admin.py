@@ -17,4 +17,3 @@ from .models import CarMake, CarModel
 # Register the CarMake and CarModel models with the admin site
 admin.site.register(CarMake)
 admin.site.register(CarModel)
-

@@ -14,6 +14,7 @@
 # - __str__ method to print a car make object
 from django.db import models
 
+
 # CarMake model to store car makes (e.g., Toyota, Ford)
 class CarMake(models.Model):
     name = models.CharField(max_length=100)
@@ -21,7 +22,6 @@ class CarMake(models.Model):
 
     def __str__(self):
         return self.name  # Return the name as the string representation
-
 
 
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
@@ -36,27 +36,27 @@ class CarMake(models.Model):
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+
 # CarModel model to store car models (e.g., Corolla, Mustang)
 class CarModel(models.Model):
-    car_make = models.ForeignKey('CarMake', on_delete=models.CASCADE)  # Many-to-One relationship to CarMake
+    car_make = models.ForeignKey(
+        "CarMake", on_delete=models.CASCADE
+    )  # Many-to-One relationship to CarMake
     dealer_id = models.IntegerField()  # Dealer ID from the Cloudant database
     name = models.CharField(max_length=100)  # Model name (e.g., Corolla, Mustang)
-    
+
     # Choices for car type
     CAR_TYPES = [
-        ('SEDAN', 'Sedan'),
-        ('SUV', 'SUV'),
-        ('WAGON', 'Wagon'),
+        ("SEDAN", "Sedan"),
+        ("SUV", "SUV"),
+        ("WAGON", "Wagon"),
     ]
-    type = models.CharField(max_length=10, choices=CAR_TYPES, default='SUV')  # Car type with choices
+    type = models.CharField(
+        max_length=10, choices=CAR_TYPES, default="SUV"
+    )  # Car type with choices
     year = models.IntegerField(
-        default=2023,
-        validators=[
-            MaxValueValidator(2023),
-            MinValueValidator(2015)
-        ]
+        default=2023, validators=[MaxValueValidator(2023), MinValueValidator(2015)]
     )  # Car year with validation
 
     def __str__(self):
         return f"{self.car_make.name} {self.name} ({self.year})"  # Return make, model, and year as the string representation
-

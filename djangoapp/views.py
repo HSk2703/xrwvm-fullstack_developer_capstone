@@ -17,12 +17,13 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 
+
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
 def login_user(request):
     data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
+    username = data["userName"]
+    password = data["password"]
     user = authenticate(username=username, password=password)
     response_data = {"userName": username}
     if user is not None:
@@ -41,18 +42,21 @@ def logout_request(request):
 @csrf_exempt
 def registration(request):
     data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
-    first_name = data['firstName']
-    last_name = data['lastName']
-    email = data['email']
+    username = data["userName"]
+    password = data["password"]
+    first_name = data["firstName"]
+    last_name = data["lastName"]
+    email = data["email"]
     try:
         User.objects.get(username=username)
         response_data = {"userName": username, "error": "Already Registered"}
     except User.DoesNotExist:
         user = User.objects.create_user(
-            username=username, first_name=first_name,
-            last_name=last_name, password=password, email=email
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            password=password,
+            email=email,
         )
         login(request, user)
         response_data = {"userName": username, "status": "Authenticated"}
@@ -63,7 +67,7 @@ def registration(request):
 def get_cars(request):
     if CarMake.objects.count() == 0:
         initiate()
-    car_models = CarModel.objects.select_related('car_make')
+    car_models = CarModel.objects.select_related("car_make")
     cars = [
         {"CarModel": car_model.name, "CarMake": car_model.car_make.name}
         for car_model in car_models
@@ -93,8 +97,8 @@ def get_dealer_reviews(request, dealer_id):
         endpoint = f"/fetchReviews/dealer/{dealer_id}"
         reviews = get_request(endpoint)
         for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            review_detail['sentiment'] = response['sentiment']
+            response = analyze_review_sentiments(review_detail["review"])
+            review_detail["sentiment"] = response["sentiment"]
         return JsonResponse({"status": 200, "reviews": reviews})
     return JsonResponse({"status": 400, "message": "Bad Request"})
 
