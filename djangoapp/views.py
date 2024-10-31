@@ -1,13 +1,13 @@
 # Uncomment the required imports before adding the code
 
-from django.shortcuts import render
+from django.shortcuts import render  # noqa: F401
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .populate import initiate
+from .populate import initiate  # noqa: F401
 from .models import CarMake, CarModel
 from .restapis import get_request, analyze_review_sentiments, post_review
 
@@ -23,17 +23,18 @@ def login_user(request):
     username = data['userName']
     password = data['password']
     user = authenticate(username=username, password=password)
-    data = {"userName": username}
+    response_data = {"userName": username}
     if user is not None:
         login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-    return JsonResponse(data)
+        response_data = {"userName": username, "status": "Authenticated"}
+    return JsonResponse(response_data)
+
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
     logout(request)
-    data = {"userName": ""}
-    return JsonResponse(data)
+    return JsonResponse({"userName": ""})
+
 
 # Create a `registration` view to handle sign up request
 @csrf_exempt
@@ -46,20 +47,20 @@ def registration(request):
     email = data['email']
     try:
         User.objects.get(username=username)
-        data = {"userName": username, "error": "Already Registered"}
+        response_data = {"userName": username, "error": "Already Registered"}
     except User.DoesNotExist:
         user = User.objects.create_user(
-            username=username, first_name=first_name, 
+            username=username, first_name=first_name,
             last_name=last_name, password=password, email=email
         )
         login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-    return JsonResponse(data)
+        response_data = {"userName": username, "status": "Authenticated"}
+    return JsonResponse(response_data)
+
 
 # Method to get the list of cars
 def get_cars(request):
-    count = CarMake.objects.filter().count()
-    if count == 0:
+    if CarMake.objects.count() == 0:
         initiate()
     car_models = CarModel.objects.select_related('car_make')
     cars = [
@@ -68,11 +69,13 @@ def get_cars(request):
     ]
     return JsonResponse({"CarModels": cars})
 
+
 # Update the `get_dealerships` render list of dealerships all by default, particular state if state is passed
 def get_dealerships(request, state="All"):
     endpoint = "/fetchDealers" if state == "All" else f"/fetchDealers/{state}"
     dealerships = get_request(endpoint)
     return JsonResponse({"status": 200, "dealers": dealerships})
+
 
 # get_dealer_details method
 def get_dealer_details(request, dealer_id):
@@ -81,6 +84,7 @@ def get_dealer_details(request, dealer_id):
         dealership = get_request(endpoint)
         return JsonResponse({"status": 200, "dealer": dealership})
     return JsonResponse({"status": 400, "message": "Bad Request"})
+
 
 # get_dealer_reviews
 def get_dealer_reviews(request, dealer_id):
@@ -92,6 +96,7 @@ def get_dealer_reviews(request, dealer_id):
             review_detail['sentiment'] = response['sentiment']
         return JsonResponse({"status": 200, "reviews": reviews})
     return JsonResponse({"status": 400, "message": "Bad Request"})
+
 
 # add_review(request)
 @csrf_exempt
