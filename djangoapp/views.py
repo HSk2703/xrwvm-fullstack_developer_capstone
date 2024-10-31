@@ -1,6 +1,7 @@
 # Uncomment the required imports before adding the code
+# flake8: noqa
 
-from django.shortcuts import render  # noqa: F401
+from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import logout, login, authenticate

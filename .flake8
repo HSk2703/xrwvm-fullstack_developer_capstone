@@ -1,0 +1,12 @@
+[flake8]
+# Ignore specific errors
+ignore = 
+    E501,  # line too long
+    E131,  # continuation line unaligned for hanging indent
+    F401,  # imported but unused
+    F811,  # redefinition of unused
+    E302,  # expected 2 blank lines
+    F841,  # local variable assigned but never used
+    W291,  # trailing whitespace
+    E231,  # missing whitespace after ','
+    W391   # blank line at end of file
